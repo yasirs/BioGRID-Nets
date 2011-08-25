@@ -43,7 +43,7 @@ def getFileNet(fname,int_type='physical',id_type='entrez',as_Graph=False):
 	for line in it:
 		words = line.rstrip().split('\t')
 		if words[type_index]==int_type:
-			if words[idA] not in ('',' ','-') and words[idB] not in ('',' ','-'):
+			if words[idA] not in ('',' ','-') and words[idB] not in ('',' ','-') and words[idA]!=words[idB]:
 				G.add_edge(words[idA],words[idB])
 	if as_Graph:
 		return G
