@@ -1,7 +1,8 @@
 import os
 
+BGRID_VERSION = '3.1.84'
 
-def download_zip(ver='3.1.79'):
+def download_zip(ver=BGRID_VERSION):
 	"""Download a .zip file from BioGRID
 	download_zip(ver='3.1.79')
 	"""
@@ -15,7 +16,7 @@ def download_zip(ver='3.1.79'):
 def download_exists(ver):
 	return os.path.exists('data/'+ver)
 
-def getSpecies(species,int_type='physical',ver='3.1.79',id_type='entrez',as_Graph=False):
+def getSpecies(species,int_type='physical',ver=BGRID_VERSION,id_type='entrez',as_Graph=False):
 	if not download_exists(ver):
 		download_zip(ver)
 	os.chdir('data/'+ver+'/')
@@ -50,7 +51,7 @@ def getFileNet(fname,int_type='physical',id_type='entrez',as_Graph=False):
 	else:
 		return G.edges()
 
-def getSpeciesPruned(species,int_type='physical',ver='3.1.79',id_type='entrez',as_Graph=False):
+def getSpeciesPruned(species,int_type='physical',ver=BGRID_VERSION,id_type='entrez',as_Graph=False):
 	import networkx as nx
 	G = getSpecies(species,ver=ver,int_type=int_type,id_type=id_type,as_Graph=True)
 	G = nx.connected_component_subgraphs(G)[0]

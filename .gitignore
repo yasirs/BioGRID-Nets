@@ -1,0 +1,8 @@
+# Raw data
+##########
+*.zip
+*.tab2.txt
+# Compiled source
+*.pyc
+*.txt
+.*.swp
