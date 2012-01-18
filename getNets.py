@@ -3,18 +3,17 @@ import networkx as nx
 
 BGRID_VERSION = '3.1.84'
 
-def download_zip(ver=BGRID_VERSION):
+def download_zip(ver=BGRID_VERSION, dataFolder='data'):
 	"""Download a .zip file from BioGRID
 	"""
-	os.chdir('data')
-	if not os.path.exists(ver):
-		os.mkdir(ver)
-	os.chdir(ver)
-	urllib.urlretrieve('http://thebiogrid.org/downloads/archives/Release%%20Archive/BIOGRID-%s/BIOGRID-ORGANISM-%s.tab2.zip' %(ver,ver),filename='BIOGRID-ORGANISM-%s.tab2.zip' %ver)
-	os.chdir('../../')
+	if not os.path.exists(dataFolder):
+		os.mkdir(dataFolder)
+	if not os.path.exists(dataFolder + '/' + ver):
+		os.mkdir(dataFolder + '/' + ver)
+	urllib.urlretrieve('http://thebiogrid.org/downloads/archives/Release%%20Archive/BIOGRID-%s/BIOGRID-ORGANISM-%s.tab2.zip' %(ver,ver),filename='%s/%s/BIOGRID-ORGANISM-%s.tab2.zip' %(data,ver,ver))
 
-def download_exists(ver):
-	return os.path.exists('data/'+ver)
+def download_exists(ver, dataFolder='data'):
+	return os.path.exists(dataFolder+'/'+ver)
 
 def getMultiEdges(G,as_Graph=False,minConfirm=2):
 	if (type(G) != nx.MultiGraph):
@@ -28,16 +27,15 @@ def getMultiEdges(G,as_Graph=False,minConfirm=2):
 	else:
 		return GG.edges()
 
-def getSpecies(species,int_type='physical',ver=BGRID_VERSION,id_type='entrez',as_Graph=False,as_MultiGraph=False):
-	if not download_exists(ver):
-		download_zip(ver)
+def getSpecies(species,int_type='physical',ver=BGRID_VERSION,id_type='entrez',as_Graph=False,as_MultiGraph=False,dataFolder='data'):
+	if not download_exists(ver,dataFolder=dataFolder):
+		download_zip(ver,dataFolder=dataFolder)
 	os.chdir('data/'+ver+'/')
-	if not os.path.exists('BIOGRID-ORGANISM-%s-%s.tab2.txt' %(species,ver)):
-		os.system('unzip BIOGRID-ORGANISM-%s.tab2.zip' %ver)
-	if not os.path.exists('BIOGRID-ORGANISM-%s-%s.tab2.txt' %(species,ver)):
+	if not os.path.exists('%s/%s/BIOGRID-ORGANISM-%s-%s.tab2.txt' %(dataFolder,ver,species,ver)):
+		os.system('unzip %s/%s/BIOGRID-ORGANISM-%s.tab2.zip -d %s/%s' %(dataFolder,ver,ver,dataFolder,ver)
+	if not os.path.exists('%s\%s\BIOGRID-ORGANISM-%s-%s.tab2.txt' %(dataFolder,ver,species,ver)):
 		raise IOError("Species %s does not exist in BIOGRID-ORGANISM-%s.tab2.zip" %(species,ver))
-	os.chdir('../../')
-	return getFileNet('data/%s/BIOGRID-ORGANISM-%s-%s.tab2.txt' %(ver,species,ver),int_type=int_type,id_type=id_type,as_Graph=as_Graph,as_MultiGraph=as_MultiGraph)
+	return getFileNet('%s/%s/BIOGRID-ORGANISM-%s-%s.tab2.txt' %(dataFolder,ver,species,ver),int_type=int_type,id_type=id_type,as_Graph=as_Graph,as_MultiGraph=as_MultiGraph)
 
 def getFileNet(fname,int_type='physical',id_type='entrez',as_Graph=False,as_MultiGraph=False):
 	if int_type not in ('physical','genetic'):
